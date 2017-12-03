@@ -1,0 +1,39 @@
+sudo: true
+language: bash
+os:
+  - linux
+
+addons:
+  apt:
+    packages:
+      - clang
+      - libffi-dev
+      - mercurial
+      - graphviz
+      - xdot
+      - libftdi-dev
+
+before_install:
+  - PROJECT_PATH=$(pwd)
+
+install:
+  - mkdir -p ~/fpga
+  - cd ~/fpga
+  - git clone https://github.com/cliffordwolf/icestorm.git icestorm
+  - cd icestorm
+  - make -j$(nproc)
+  - sudo make install
+  - cd ~/fpga
+  - git clone https://github.com/cseed/arachne-pnr.git arachne-pnr
+  - cd arachne-pnr
+  - make -j$(nproc)
+  - sudo make install
+  - cd ~/fpga
+  - git clone https://github.com/cliffordwolf/yosys.git yosys
+  - cd yosys
+  - make -j$(nproc)
+  - sudo make install
+
+script:
+  - cd $PROJECT_PATH
+  - make
