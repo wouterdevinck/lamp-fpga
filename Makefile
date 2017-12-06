@@ -2,7 +2,7 @@ PROJ = lamp
 PIN_DEF = lamp.pcf
 DEVICE = hx1k
 
-all: $(PROJ).rpt $(PROJ).bin
+all: $(PROJ).bin
 
 %.blif: %.v
 	yosys -p 'synth_ice40 -top top -blif $@' $<
@@ -13,15 +13,8 @@ all: $(PROJ).rpt $(PROJ).bin
 %.bin: %.asc
 	icepack $< $@
 
-%.rpt: %.asc
-	icetime -d $(DEVICE) -mtr $@ $<
-
-prog: $(PROJ).bin
-	iCEburn.py  -e -v -w  $<
-
-sudo-prog: $(PROJ).bin
-	@echo 'Executing prog as root!!!'
-	iCEburn.py  -e -v -w  $<
+flash: $(PROJ).bin
+	iceprogduino $<
 
 clean:
 	rm -f $(PROJ).blif $(PROJ).asc $(PROJ).rpt $(PROJ).bin

@@ -1,13 +1,11 @@
 module top (
 	input  clk,
-	output LED2,
-	output LED3,
-	output LED4,
-	output LED5
+	output LED1,
+	output LED2
 );
 
-	localparam BITS = 4;
-	localparam LOG2DELAY = 22;
+	localparam BITS = 2;
+	localparam LOG2DELAY = 24;
 
 	reg [BITS+LOG2DELAY-1:0] counter = 0;
 	reg [BITS-1:0] outcnt;
@@ -17,5 +15,5 @@ module top (
 		outcnt <= counter >> LOG2DELAY;
 	end
 
-	assign {LED2, LED3, LED4, LED5} = outcnt;
+	assign {LED1, LED2} = outcnt;
 endmodule
