@@ -1,11 +1,12 @@
 PROJ = lamp
-PIN_DEF = lamp.pcf
 DEVICE = hx1k
+
+PIN_DEF = $(PROJ).pcf
 
 all: $(PROJ).bin
 
-%.blif: %.v
-	yosys -p 'synth_ice40 -top lamp -blif $@' $<
+%.blif: src/%.v
+	yosys -p 'synth_ice40 -top $(PROJ) -blif $@' $<
 
 %.asc: $(PIN_DEF) %.blif
 	arachne-pnr -d $(subst hx,,$(subst lp,,$(DEVICE))) -o $@ -p $^ -P vq100
