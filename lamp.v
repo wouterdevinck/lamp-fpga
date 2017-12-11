@@ -1,19 +1,21 @@
-module top (
-	input  clk,
-	output LED1,
-	output LED2
+`include "clk_div.v"
+
+module lamp (
+  input  i_clk100M,
+  output o_led1,
+  output o_led2
 );
 
-	localparam BITS = 2;
-	localparam LOG2DELAY = 24;
+  reg r_clk;
 
-	reg [BITS+LOG2DELAY-1:0] counter = 0;
-	reg [BITS-1:0] outcnt;
+  clk_div #(
+    .c_div (50000000) // 2 Hz
+  ) div (
+    .i_clk (i_clk100M),
+    .o_clk (r_clk)
+  );
 
-	always @(posedge clk) begin
-		counter <= counter + 1;
-		outcnt <= counter >> LOG2DELAY;
-	end
+  assign o_led1 = r_clk;
+  assign o_led2 = !r_clk;
 
-	assign {LED1, LED2} = outcnt;
 endmodule

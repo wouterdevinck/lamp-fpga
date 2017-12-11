@@ -5,7 +5,7 @@ DEVICE = hx1k
 all: $(PROJ).bin
 
 %.blif: %.v
-	yosys -p 'synth_ice40 -top top -blif $@' $<
+	yosys -p 'synth_ice40 -top lamp -blif $@' $<
 
 %.asc: $(PIN_DEF) %.blif
 	arachne-pnr -d $(subst hx,,$(subst lp,,$(DEVICE))) -o $@ -p $^ -P vq100
