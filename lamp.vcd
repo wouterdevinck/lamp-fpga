@@ -1,0 +1,35 @@
+$date
+	Tue Dec 12 22:49:43 2017
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module lamp_tb $end
+$var wire 1 ! w_clk $end
+$var wire 1 " w_led2 $end
+$var wire 1 # w_led1 $end
+$scope module lamp $end
+$var wire 1 ! i_clk100M $end
+$var wire 1 # o_led1 $end
+$var wire 1 $ w_clk $end
+$var wire 1 " o_led2 $end
+$scope module div $end
+$var wire 1 ! i_clk $end
+$var wire 1 $ o_clk $end
+$var reg 1 $ r_clk $end
+$var reg 26 % r_count [25:0] $end
+$upscope $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+b0 %
+x$
+x#
+x"
+z!
+$end

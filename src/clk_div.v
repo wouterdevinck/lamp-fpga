@@ -7,14 +7,17 @@ module clk_div #(
 
   localparam c_width = $clog2(c_div);
   reg [c_width-1:0] r_count = 0;
+  reg r_clk;
 
   always @(posedge i_clk) begin
     if (r_count == c_div) begin
       r_count <= 0;
-      o_clk <= !o_clk;
+      r_clk <= !r_clk;
     end else begin
       r_count <= r_count + 1;
     end
   end
+
+  assign o_clk = r_clk;
 
 endmodule

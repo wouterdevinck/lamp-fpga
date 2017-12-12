@@ -1,27 +1,29 @@
-`include "../src/lamp.v"
+`include "lamp.v"
 
 module lamp_tb();
 
-  reg i_clk100M;
-  reg o_led1;
-  reg o_led2;
+  wire w_clk;
+  wire w_led1;
+  wire w_led2;
    
   lamp lamp (
-    .i_clk100M (i_clk100M),
-    .o_led1 (o_led1),
-    .o_led2 (o_led2)
+    .i_clk100M (w_clk),
+    .o_led1 (w_led1),
+    .o_led2 (w_led2)
   );
 
-  initial begin
-    i_clk100M = 0; 
-  end 
+  //initial begin
+  //  w_clk = 0; 
+  //end 
  
-  always  
-    #5 i_clk100M = !i_clk100M; 
+  //always  
+  //  #5 w_clk = !w_clk;
    
   // TODO
 
   initial begin
+    $dumpfile("lamp.vcd");
+    $dumpvars(0, lamp_tb);
 
     $finish;
   end

@@ -6,16 +6,16 @@ module lamp (
   output o_led2
 );
 
-  reg r_clk;
+  wire w_clk;
 
   clk_div #(
     .c_div (50000000) // 2 Hz
   ) div (
     .i_clk (i_clk100M),
-    .o_clk (r_clk)
+    .o_clk (w_clk)
   );
 
-  assign o_led1 = r_clk;
-  assign o_led2 = !r_clk;
+  assign o_led1 = w_clk;
+  assign o_led2 = !w_clk;
 
 endmodule
