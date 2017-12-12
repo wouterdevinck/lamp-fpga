@@ -17,7 +17,10 @@ all: $(PROJ).bin
 flash: $(PROJ).bin
 	iceprogduino $<
 
+lint: 
+	verilator --lint-only -Isrc src/$(PROJ).v
+
 clean:
 	rm -f $(PROJ).blif $(PROJ).asc $(PROJ).rpt $(PROJ).bin
 
-.PHONY: all prog clean
+.PHONY: all flash lint clean
