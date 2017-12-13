@@ -10,7 +10,7 @@ module clk_div #(
   reg r_clk = 0;
 
   always @(posedge i_clk) begin
-    if (r_count == c_div) begin
+    if (r_count[c_width-1:0] == c_div[c_width-1:0]) begin
       r_count <= 0;
       r_clk <= !r_clk;
     end else begin

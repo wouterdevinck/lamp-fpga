@@ -21,7 +21,7 @@ flash: $(PROJ).bin
 	iceprogduino $<
 
 lint: 
-	verilator --lint-only -Isrc src/$(PROJ).v
+	verilator --lint-only -Isrc --top-module $(PROJ) src/$(PROJ).v
 
 simulate: $(PROJ).vcd
 	gtkwave $<

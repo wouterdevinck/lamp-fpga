@@ -8,7 +8,7 @@ module lamp_tb();
   wire w_led2;
  
   lamp #(
-    .c_freq (2000000) // 2 Mhz
+    .c_freq (10000000) // 10 Mhz
   ) lamp (
     .i_clk (r_clk),
     .o_led1 (w_led1),
@@ -20,17 +20,17 @@ module lamp_tb();
   end 
  
   always begin
-    #0.25 r_clk = !r_clk; // 2 MHz
+    #0.05 r_clk = !r_clk; // 10 MHz
   end
 
   always begin
-    #1000000 $display($time, " A second has passed");
+    #100000 $display($time, " 100 ms have passed");
   end
 
   initial begin
     $dumpfile("lamp.vcd");
     $dumpvars(0, lamp_tb);
-    #5000000 $finish; // 5 seconds
+    #1000000 $finish;
   end
    
 endmodule
