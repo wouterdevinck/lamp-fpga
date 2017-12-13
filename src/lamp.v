@@ -1,7 +1,9 @@
 `include "clk_div.v"
 
-module lamp (
-  input  i_clk100M,
+module lamp #( 
+  parameter c_freq = 100000000 // 100 Mhz
+)(
+  input  i_clk,
   output o_led1,
   output o_led2
 );
@@ -9,9 +11,9 @@ module lamp (
   wire w_clk;
 
   clk_div #(
-    .c_div (50000000) // 2 Hz
+    .c_div (c_freq / 2) // 2 Hz
   ) div (
-    .i_clk (i_clk100M),
+    .i_clk (i_clk),
     .o_clk (w_clk)
   );
 
