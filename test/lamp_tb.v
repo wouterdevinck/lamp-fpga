@@ -16,7 +16,7 @@ module lamp_tb();
   );
 
   initial begin
-    r_clk = 0;
+    r_clk = 1;
   end 
  
   always begin

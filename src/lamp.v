@@ -1,5 +1,5 @@
 `include "clk_div.v"
-`include "counter.v"
+`include "demo.v"
 
 module lamp #( 
   parameter c_freq = 100000000 // 100 Mhz
@@ -10,6 +10,9 @@ module lamp #(
 );
 
   wire w_clk;
+  wire w_demo_clk;
+  wire w_demo_dai;
+  wire w_demo_lat;
 
   clk_div #(
     .c_div (c_freq / 2000000) // 2 MHz
@@ -18,17 +21,14 @@ module lamp #(
     .o_clk (w_clk)
   );
 
-  //assign o_led1 = w_clk;
-  //assign o_led2 = !w_clk;
-
-  localparam c_max = 16666; // 120 fps @ 2 MHz clock
-  wire [$clog2(c_max)-1:0] r_count;
-
-  counter #(
-    .c_max (c_max)
-  ) frame_counter (
+  demo demo (
     .i_clk (w_clk),
-    .o_count (r_count)
+    .o_clk (w_demo_clk),
+    .o_dai (w_demo_dai),
+    .o_lat (w_demo_lat)
   );
+
+  assign o_led1 = 1;
+  assign o_led2 = 0;
 
 endmodule
