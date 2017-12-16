@@ -15,9 +15,9 @@ module demo (
   reg [c_frame_count_width-1:0] r_framecount = 0;
 
   always @(posedge i_clk) begin
-    if (r_count == c_frame_period[c_count_width-1:0]) begin
+    if (r_count == c_frame_period[c_count_width-1:0] - 1) begin
       r_count <= 0;
-      if (r_framecount == c_frame_max[c_frame_count_width-1:0]) begin
+      if (r_framecount == c_frame_max[c_frame_count_width-1:0] - 1) begin
         r_framecount <= 0;
       end else begin
         r_framecount <= r_framecount + 1;

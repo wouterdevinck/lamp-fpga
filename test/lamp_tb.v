@@ -1,4 +1,4 @@
-`timescale 1us/10ns
+`timescale 1us/1ns
 `include "lamp.v"
 
 module lamp_tb();
@@ -8,7 +8,7 @@ module lamp_tb();
   wire w_led2;
  
   lamp #(
-    .c_freq (10000000) // 10 Mhz
+    .c_freq (20000000) // 20 Mhz
   ) lamp (
     .i_clk (r_clk),
     .o_led1 (w_led1),
@@ -16,11 +16,11 @@ module lamp_tb();
   );
 
   initial begin
-    r_clk = 1;
+    r_clk = 0;
   end 
  
   always begin
-    #0.05 r_clk = !r_clk; // 10 MHz
+    #0.025 r_clk = !r_clk; // 20 MHz
   end
 
   always begin
