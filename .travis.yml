@@ -12,6 +12,7 @@ addons:
       - graphviz
       - xdot
       - libftdi-dev
+      - gperf
 
 before_install:
   - PROJECT_PATH=$(pwd)
