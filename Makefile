@@ -26,8 +26,10 @@ lint:
 simulate: $(PROJ).vcd
 	gtkwave $<
 
+simulate-file: $(PROJ).vcd
+
 clean:
 	rm -f $(PROJ).blif $(PROJ).asc $(PROJ).bin
 	rm -f $(PROJ).vvp $(PROJ).vcd
 
-.PHONY: all flash lint simulate clean
+.PHONY: all flash lint simulate simulate-file clean

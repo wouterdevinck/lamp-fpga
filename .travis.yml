@@ -33,7 +33,15 @@ install:
   - cd yosys
   - make -j$(nproc)
   - sudo make install
+  - cd ~/fpga
+  - git clone http://git.veripool.org/git/verilator verilator
+  - cd verilator
+  - git checkout verilator_3_916
+  - autoconf
+  - ./configure
+  - make
+  - sudo make install
 
 script:
   - cd $PROJECT_PATH
-  - make
+  - make clean lint all simulate-file
