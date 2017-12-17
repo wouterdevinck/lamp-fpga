@@ -1,3 +1,6 @@
 set_io i_clk 15
 set_io o_led1 40
 set_io o_led2 51
+set_io o_clk 26
+set_io o_dai 27
+set_io o_lat 28
