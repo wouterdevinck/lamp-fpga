@@ -41,6 +41,14 @@ install:
   - ./configure
   - make
   - sudo make install
+  - cd ~/fpga
+  - git clone https://github.com/steveicarus/iverilog.git iverilog
+  - cd iverilog
+  - git checkout v10_2
+  - autoconf
+  - ./configure
+  - make
+  - sudo make install
 
 script:
   - cd $PROJECT_PATH
