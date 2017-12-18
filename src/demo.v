@@ -7,8 +7,8 @@ module demo (
 
   localparam c_boards = 1;
 
-  localparam c_frame_period = 16666;
-  localparam c_frame_max = 120;
+  localparam c_frame_period = 16666; // 120 fps (@ 2 MHZ i_clk)
+  localparam c_frame_max = 480;
   localparam c_channels = c_boards * 32;
   localparam c_bps = 12;
 
@@ -68,11 +68,14 @@ module demo (
           end
         end else begin
           r_bitcount <= r_bitcount + 1;
-          if (r_channelcount % 4 == 0) begin
+          // Rotate through the four colors
+          /* verilator lint_off WIDTH */
+          if ((r_channelcount % 4) == (r_framecount / (c_frame_max / 4))) begin
             r_dai <= 1;
           end else begin
             r_dai <= 0;
           end
+          /* verilator lint_on WIDTH */
         end
       end
       s_latch: begin
