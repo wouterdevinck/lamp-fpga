@@ -4,8 +4,6 @@
 module lamp_tb();
 
   reg r_clk;
-  wire w_led1;
-  wire w_led2;
   wire w_clk;
   wire w_dai;
   wire w_lat;
@@ -14,8 +12,6 @@ module lamp_tb();
     .c_freq (20000000) // 20 Mhz
   ) lamp (
     .i_clk (r_clk),
-    .o_led1 (w_led1),
-    .o_led2 (w_led2),
     .o_clk (w_clk),
     .o_dai (w_dai),
     .o_lat (w_lat)
