@@ -27,8 +27,6 @@ module lamp #(
 
   wire [c_bps-1:0] w_driver_data;
   wire [c_addr_w-1:0] w_driver_addr;
-  wire w_driver_read;
-  wire w_driver_drq;
   wire w_driver_clk;
   wire w_driver_dai;
   wire w_driver_lat;
@@ -48,7 +46,7 @@ module lamp #(
     .i_wen (w_current_write),
     .i_waddr (w_current_addr),
     .i_wdata (w_current_data),
-    .i_ren (w_driver_read),
+    .i_ren (1'b1),
     .i_raddr (w_driver_addr),
     .o_rdata (w_driver_data)
   );
@@ -61,8 +59,6 @@ module lamp #(
     .i_clk (w_clk),
     .i_data (w_driver_data),
     .o_addr (w_driver_addr),
-    .o_read (w_driver_read),
-    .o_drq (w_driver_drq),
     .o_clk (w_driver_clk),
     .o_dai (w_driver_dai),
     .o_lat (w_driver_lat)

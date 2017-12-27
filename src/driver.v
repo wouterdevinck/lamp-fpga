@@ -8,8 +8,6 @@ module driver #(
   input i_clk,
   input [c_bps-1:0] i_data,
   output [c_addr_w-1:0] o_addr,
-  output o_read,
-  output o_drq,
   output o_clk,
   output o_dai,
   output o_lat
@@ -94,8 +92,6 @@ module driver #(
   end
 
   assign o_addr = r_addr;
-  assign o_read = 1;
-  assign o_drq = r_lat;
 
   assign o_clk = ~i_clk & (r_state == s_transmit);
   assign o_dai = r_dai;
