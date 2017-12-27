@@ -26,11 +26,12 @@ module driver #(
   reg [c_addr_w-1:0] r_addr = 0;
   reg [c_bit_count_width-1:0] r_bitcount = 0;
 
-  localparam s_wait = 2'd0;
-  localparam s_load = 2'd1;
-  localparam s_transmit = 2'd2;
-  localparam s_latch = 2'd3;
-  reg [1:0] r_state = s_wait; 
+  localparam s_wait = 3'd0;
+  localparam s_load = 3'd1;
+  localparam s_prep = 3'd2;
+  localparam s_transmit = 3'd3;
+  localparam s_latch = 3'd4;
+  reg [2:0] r_state = s_wait; 
 
   reg r_dai = 0;
   reg r_lat = 0;
@@ -60,7 +61,11 @@ module driver #(
         end
       end
       s_load: begin
+        r_state <= s_prep;
+      end
+      s_prep: begin
         r_state <= s_transmit;
+        r_dai <= i_data[c_bps - 1];
       end
       s_transmit: begin
         if (r_bitcount == c_bps[c_bit_count_width-1:0]) begin
