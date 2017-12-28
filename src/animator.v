@@ -4,11 +4,10 @@ module animator #(
   parameter c_addr_w = $clog2(c_channels),
   parameter c_bpc = 12
 )(
-  input i_clk,
-  input i_drq,
-  input [c_bpc-1:0] i_target_data,
-  output o_current_wen, o_target_ren,
-  output [c_addr_w-1:0] o_current_addr, o_target_addr,
+  input i_clk, i_drq,
+  input [c_bpc-1:0] i_target_data, i_current_data,
+  output o_current_wen,
+  output [c_addr_w-1:0] o_current_raddr, o_current_waddr, o_target_raddr,
   output [c_bpc-1:0] o_current_data
 );
 
@@ -48,5 +47,9 @@ module animator #(
       end
     endcase
   end
+
+  assign o_current_raddr = r_addr;
+  assign o_current_waddr = r_addr;
+  assign o_target_raddr  = r_addr;
 
 endmodule

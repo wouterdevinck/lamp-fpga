@@ -22,16 +22,18 @@ module lamp #(
 
   wire w_clk;
 
-  wire [c_bpc-1:0] w_target_data;
+  wire [c_bpc-1:0]    w_target_data;
   wire [c_addr_w-1:0] w_target_addr;
-  wire w_target_read;
 
-  wire [c_bpc-1:0] w_current_data;
+  wire [c_bpc-1:0]    w_animator_data;
+  wire [c_addr_w-1:0] w_animator_addr;
+  wire                w_animator_write;
+
+  wire [c_bpc-1:0]    w_current_data;
   wire [c_addr_w-1:0] w_current_addr;
-  wire w_current_write;
+  wire [c_addr_w-1:0] w_animator_current_addr;
+  wire [c_addr_w-1:0] w_driver_current_addr;
 
-  wire [c_bpc-1:0] w_driver_data;
-  wire [c_addr_w-1:0] w_driver_addr;
   wire w_driver_clk;
   wire w_driver_dai;
   wire w_driver_lat;
@@ -51,7 +53,6 @@ module lamp #(
     .i_wen (),   // TODO
     .i_waddr (), // TODO
     .i_wdata (), // TODO
-    .i_ren (w_target_read),
     .i_raddr (w_target_addr),
     .o_rdata (w_target_data)
   );
@@ -63,11 +64,12 @@ module lamp #(
     .i_clk (w_clk),
     .i_drq (w_driver_lat),
     .i_target_data (w_target_data),
-    .o_current_wen (w_current_write),
-    .o_target_ren (w_target_read),
-    .o_current_addr (w_current_addr), 
-    .o_target_addr (w_target_addr),
-    .o_current_data (w_current_data)
+    .i_current_data (w_current_data),
+    .o_current_wen (w_animator_write),
+    .o_current_waddr (w_animator_addr), 
+    .o_current_raddr (w_animator_current_addr), 
+    .o_target_raddr (w_target_addr),
+    .o_current_data (w_animator_data)
   );
 
   framebuffer #(
@@ -75,12 +77,11 @@ module lamp #(
     .c_bpc (c_bpc)
   ) current_frame (
     .i_clk (w_clk),
-    .i_wen (w_current_write),
-    .i_waddr (w_current_addr),
-    .i_wdata (w_current_data),
-    .i_ren (1'b1),
-    .i_raddr (w_driver_addr),
-    .o_rdata (w_driver_data)
+    .i_wen (w_animator_write),
+    .i_waddr (w_animator_addr),
+    .i_wdata (w_animator_data),
+    .i_raddr (w_current_addr),
+    .o_rdata (w_current_data)
   );
   
   driver #(
@@ -89,12 +90,14 @@ module lamp #(
     .c_frame_period (c_clock / c_framerate)
   ) driver (
     .i_clk (w_clk),
-    .i_data (w_driver_data),
-    .o_addr (w_driver_addr),
+    .i_data (w_current_data),
+    .o_addr (w_driver_current_addr),
     .o_clk (w_driver_clk),
     .o_dai (w_driver_dai),
     .o_lat (w_driver_lat)
   );
+
+  assign w_current_addr = w_driver_current_addr | w_animator_current_addr;
 
   assign o_clk = w_driver_clk;
   assign o_dai = w_driver_dai;

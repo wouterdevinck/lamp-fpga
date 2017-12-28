@@ -7,17 +7,17 @@ module framebuffer #(
   // Each channel has a 12 bit PWM.
   parameter c_bpc = 12
 )(
-  input i_clk, i_wen, i_ren, 
+  input i_clk, i_wen,
   input [c_addr_w-1:0] i_waddr, i_raddr,
   input [c_bpc-1:0] i_wdata,
   output reg [c_bpc-1:0] o_rdata
 );
   reg [c_bpc-1:0] r_mem [0:c_channels-1];
   always @(posedge i_clk) begin
-    if (i_wen)
+    if (i_wen) begin
       r_mem[i_waddr] <= i_wdata;
-    if (i_ren)
-      o_rdata <= r_mem[i_raddr];
+    end
+    o_rdata <= r_mem[i_raddr];
   end
   initial begin 
     r_mem[0]  = 12'hFFF;
