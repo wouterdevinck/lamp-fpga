@@ -23,7 +23,6 @@ module lamp #(
   wire w_clk;
 
   wire [c_bpc-1:0]    w_target_data;
-  wire [c_addr_w-1:0] w_target_addr;
 
   wire [c_bpc-1:0]    w_animator_data;
   wire [c_addr_w-1:0] w_animator_addr;
@@ -31,8 +30,8 @@ module lamp #(
 
   wire [c_bpc-1:0]    w_current_data;
   wire [c_addr_w-1:0] w_current_addr;
-  wire [c_addr_w-1:0] w_animator_current_addr;
-  wire [c_addr_w-1:0] w_driver_current_addr;
+
+  wire [c_addr_w-1:0] w_driver_addr;
 
   wire w_driver_clk;
   wire w_driver_dai;
@@ -53,7 +52,7 @@ module lamp #(
     .i_wen (),   // TODO
     .i_waddr (), // TODO
     .i_wdata (), // TODO
-    .i_raddr (w_target_addr),
+    .i_raddr (w_animator_addr),
     .o_rdata (w_target_data)
   );
 
@@ -66,9 +65,7 @@ module lamp #(
     .i_target_data (w_target_data),
     .i_current_data (w_current_data),
     .o_current_wen (w_animator_write),
-    .o_current_waddr (w_animator_addr), 
-    .o_current_raddr (w_animator_current_addr), 
-    .o_target_raddr (w_target_addr),
+    .o_addr (w_animator_addr), 
     .o_current_data (w_animator_data)
   );
 
@@ -91,13 +88,13 @@ module lamp #(
   ) driver (
     .i_clk (w_clk),
     .i_data (w_current_data),
-    .o_addr (w_driver_current_addr),
+    .o_addr (w_driver_addr),
     .o_clk (w_driver_clk),
     .o_dai (w_driver_dai),
     .o_lat (w_driver_lat)
   );
 
-  assign w_current_addr = w_driver_current_addr | w_animator_current_addr;
+  assign w_current_addr = w_driver_addr | w_animator_addr;
 
   assign o_clk = w_driver_clk;
   assign o_dai = w_driver_dai;
