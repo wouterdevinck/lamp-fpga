@@ -1,24 +1,31 @@
-// Holds one frame. Uses 3 BRAMs for 30 ledboards.
 module framebuffer #( 
   parameter c_ledboards = 30,
-  // Each ledboard has two DM633 16 channel drivers.
   parameter c_channels = c_ledboards * 32,
   parameter c_addr_w = $clog2(c_channels),
-  // Each channel has a 12 bit PWM.
-  parameter c_bpc = 12
+  parameter c_bpc = 12,
+  parameter c_max_time = 480,
+  parameter c_time_w = $clog2(c_max_time)
 )(
   input i_clk, i_wen,
   input [c_addr_w-1:0] i_waddr, i_raddr,
   input [c_bpc-1:0] i_wdata,
-  output reg [c_bpc-1:0] o_rdata
+  input [c_time_w-1:0] i_time, 
+  output reg [c_bpc-1:0] o_rdata,
+  output reg [c_time_w-1:0] o_time 
 );
+
   reg [c_bpc-1:0] r_mem [0:c_channels-1];
+  reg [c_time_w-1:0] r_time;
+
   always @(posedge i_clk) begin
     if (i_wen) begin
       r_mem[i_waddr] <= i_wdata;
+      r_time <= i_time;
     end
     o_rdata <= r_mem[i_raddr];
+    o_time <= r_time;
   end
+
   initial begin 
     r_mem[0]  = 12'hFFF;
     r_mem[1]  = 0;
@@ -85,4 +92,5 @@ module framebuffer #(
     r_mem[62] = 0;
     r_mem[63] = 0;
   end
+
 endmodule

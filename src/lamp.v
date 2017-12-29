@@ -14,11 +14,13 @@ module lamp #(
 
   localparam c_ledboards = 30;
   localparam c_framerate = 120;
+  localparam c_max_time = 480;
   localparam c_bpc = 12;
   localparam c_clock = 2000000;
 
   localparam c_channels = c_ledboards * 32;
   localparam c_addr_w = $clog2(c_channels);
+  localparam c_time_w = $clog2(c_max_time);
 
   wire w_clk;
 
@@ -52,21 +54,26 @@ module lamp #(
     .i_wen (),   // TODO
     .i_waddr (), // TODO
     .i_wdata (), // TODO
+    .i_time (), // TODO
     .i_raddr (w_animator_addr),
-    .o_rdata (w_target_data)
+    .o_rdata (w_target_data),
+    .o_time ()
   );
 
   animator #(
     .c_ledboards (c_ledboards),
-    .c_bpc (c_bpc)
+    .c_bpc (c_bpc),
+    .c_max_time (c_max_time)
   ) animator (
     .i_clk (w_clk),
     .i_drq (w_driver_lat),
     .i_target_data (w_target_data),
     .i_current_data (w_current_data),
-    .o_current_wen (w_animator_write),
+    .i_target_time (),
+    .i_start_time (),
+    .o_wen (w_animator_write),
     .o_addr (w_animator_addr), 
-    .o_current_data (w_animator_data)
+    .o_data (w_animator_data)
   );
 
   framebuffer #(
@@ -77,8 +84,10 @@ module lamp #(
     .i_wen (w_animator_write),
     .i_waddr (w_animator_addr),
     .i_wdata (w_animator_data),
+    .i_time (),
     .i_raddr (w_current_addr),
-    .o_rdata (w_current_data)
+    .o_rdata (w_current_data),
+    .o_time ()
   );
   
   driver #(
