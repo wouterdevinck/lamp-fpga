@@ -32,24 +32,7 @@ module animator #(
 
   localparam c_anim_linear =  1'd1; 
 
-  /*task time_diff;
-
-    input [c_time_w-1:0] i_from;
-    input [c_time_w-1:0] i_to;
-    input [c_time_w-1:0] o_diff;
-
-    begin
-      if (i_to < i_from) begin
-        o_diff = c_max_time - i_from + i_to;
-      end else begin
-        o_diff = i_to - i_from;
-      end
-    end
-
-  endtask*/
-
   /* verilator lint_off WIDTH */
-
   task calculate;
 
     input [0:0] i_anim_type;
@@ -63,13 +46,6 @@ module animator #(
     begin
       case (i_anim_type) 
         c_anim_linear: begin
-
-          /*o_data = i_current_data + (
-                   (i_target_data - i_current_data) / 
-                   ((i_target_time < i_current_time) ? 
-                   (c_max_time - i_current_time + i_target_time) : 
-                   (i_target_time - i_current_time)));*/
-
           if (i_target_time < i_current_time) begin
             o_data = i_current_data + (i_target_data - i_current_data) / 
                      (c_max_time - i_current_time + i_target_time);
@@ -77,16 +53,13 @@ module animator #(
             o_data = i_current_data + (i_target_data - i_current_data) / 
                      (i_target_time - i_current_time);
           end
-
         end
         default: begin
         end
       endcase
     end
 
-
   endtask
-
   /* verilator lint_on WIDTH */
 
   always @(posedge i_clk) begin
