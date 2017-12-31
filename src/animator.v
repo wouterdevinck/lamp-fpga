@@ -51,7 +51,7 @@ module animator #(
                      (c_max_time - i_current_time + i_target_time);
           end else begin
             o_data = i_current_data + (i_target_data - i_current_data) / 
-                     (i_target_time - i_current_time);
+                     (i_target_time - i_current_time - 1'b1 + 1'b1);
           end
         end
         default: begin
