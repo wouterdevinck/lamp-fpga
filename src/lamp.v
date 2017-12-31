@@ -49,15 +49,29 @@ module lamp #(
   framebuffer #(
     .c_ledboards (c_ledboards),
     .c_bpc (c_bpc)
+  ) next_target_frame (
+    .i_clk (w_clk),
+    .i_wen (),   // TODO
+    .i_waddr (), // TODO
+    .i_wdata (), // TODO
+    .i_time (),  // TODO
+    .i_raddr (), // TODO
+    .o_rdata (), // TODO
+    .o_time ()   // TODO
+  );
+
+  framebuffer #(
+    .c_ledboards (c_ledboards),
+    .c_bpc (c_bpc)
   ) target_frame (
     .i_clk (w_clk),
     .i_wen (),   // TODO
     .i_waddr (), // TODO
     .i_wdata (), // TODO
-    .i_time (), // TODO
+    .i_time (),  // TODO
     .i_raddr (w_animator_addr),
     .o_rdata (w_target_data),
-    .o_time ()
+    .o_time ()   // TODO
   );
 
   animator #(
@@ -69,8 +83,8 @@ module lamp #(
     .i_drq (w_driver_lat),
     .i_target_data (w_target_data),
     .i_current_data (w_current_data),
-    .i_target_time (),
-    .i_start_time (),
+    .i_target_time (), // TODO
+    .i_start_time (),  // TODO
     .o_wen (w_animator_write),
     .o_addr (w_animator_addr), 
     .o_data (w_animator_data)
@@ -84,10 +98,10 @@ module lamp #(
     .i_wen (w_animator_write),
     .i_waddr (w_animator_addr),
     .i_wdata (w_animator_data),
-    .i_time (),
+    .i_time (), // TODO
     .i_raddr (w_current_addr),
     .o_rdata (w_current_data),
-    .o_time ()
+    .o_time ()  // TODO
   );
   
   driver #(
