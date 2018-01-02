@@ -1,6 +1,7 @@
 PROJ = lamp
 DEVICE = -d 1k -P vq100
 # DEVICE = -d 8k -P tq144:4k
+# DEVICE = -d 5k -P sg48
 
 %.blif: src/%.v
 	yosys -p 'synth_ice40 -top $(PROJ) -blif $@' $<
