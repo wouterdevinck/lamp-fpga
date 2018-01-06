@@ -91,7 +91,7 @@ module driver #(
     endcase
   end
 
-  assign o_addr = r_addr;
+  assign o_addr = ((r_addr >> 4) << 4) + (15 - (r_addr % 16));
 
   assign o_clk = ~i_clk & (r_state == s_transmit);
   assign o_dai = r_dai;
