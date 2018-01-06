@@ -4,7 +4,7 @@ DEVICE = -d 1k -P vq100
 # DEVICE = -d 5k -P sg48
 
 %.blif: src/%.v
-	yosys -p 'synth_ice40 -top $(PROJ) -blif $@' $<
+	yosys -v 3 -p 'synth_ice40 -top $(PROJ) -blif $@' $<
 
 %.asc: $(PROJ).pcf %.blif
 	arachne-pnr -o $@ -p $^ $(DEVICE)
