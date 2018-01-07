@@ -24,11 +24,11 @@ module driver #(
   reg [c_addr_w-1:0] r_addr = 0;
   reg [c_bit_count_width-1:0] r_bitcount = 0;
 
-  localparam s_wait =     3'd0;
-  localparam s_load =     3'd1;
-  localparam s_prep =     3'd2;
-  localparam s_transmit = 3'd3;
-  localparam s_latch =    3'd4;
+  localparam s_wait = 3'd0;
+  localparam s_load = 3'd1;
+  localparam s_prep = 3'd2;
+  localparam s_send = 3'd3;
+  localparam s_latch = 3'd4;
   reg [2:0] r_state = s_wait; 
 
   reg r_dai = 0;
@@ -43,7 +43,7 @@ module driver #(
   end
 
   always @(negedge i_clk) begin
-    if (r_state == s_transmit) begin
+    if (r_state == s_send) begin
       r_bitcount <= r_bitcount + 1;
     end else begin
       r_bitcount <= 0;
@@ -62,10 +62,10 @@ module driver #(
         r_state <= s_prep;
       end
       s_prep: begin
-        r_state <= s_transmit;
+        r_state <= s_send;
         r_dai <= i_data[c_bpc - 1];
       end
-      s_transmit: begin
+      s_send: begin
         if (r_bitcount == c_bpc[c_bit_count_width-1:0]) begin
           if (r_addr == c_channels_1[c_addr_w-1:0]) begin
             r_state <= s_latch;
@@ -93,7 +93,7 @@ module driver #(
 
   assign o_addr = ((r_addr >> 4) << 4) + (15 - (r_addr % 16));
 
-  assign o_clk = ~i_clk & (r_state == s_transmit);
+  assign o_clk = ~i_clk & (r_state == s_send);
   assign o_dai = r_dai;
   assign o_lat = r_lat;
 

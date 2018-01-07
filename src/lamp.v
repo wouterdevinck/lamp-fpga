@@ -1,4 +1,4 @@
-`include "clk_div.v"
+`include "clkdiv.v"
 `include "framebuffer.v"
 `include "animator.v"
 `include "driver.v"
@@ -14,9 +14,9 @@ module lamp #(
 
   localparam c_ledboards = 30;
   localparam c_framerate = 120;
-  localparam c_max_time = 480;
+  localparam c_max_time = 1024;
   localparam c_bpc = 12;
-  localparam c_clock = 2000000;
+  localparam c_clock = 2000000; // 2 MHz
 
   localparam c_channels = c_ledboards * 32;
   localparam c_addr_w = $clog2(c_channels);
@@ -39,9 +39,9 @@ module lamp #(
   wire w_driver_dai;
   wire w_driver_lat;
 
-  clk_div #(
+  clkdiv #(
     .c_div (c_freq / c_clock)
-  ) clk_div (
+  ) clkdiv (
     .i_clk (i_clk),
     .o_clk (w_clk)
   );

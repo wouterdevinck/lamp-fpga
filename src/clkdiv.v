@@ -1,4 +1,4 @@
-module clk_div #( 
+module clkdiv #( 
   parameter c_div = 4 // needs to be even and >= 4
 )(
   input i_clk,
