@@ -1,4 +1,5 @@
 `include "clkdiv.v"
+`include "protocol.v"
 `include "framebuffer.v"
 `include "animator.v"
 `include "driver.v"
@@ -6,10 +7,20 @@
 module lamp #( 
   parameter c_freq = 100000000 // 100 Mhz
 )(
-  input  i_clk,
+
+  // Clock input
+  input i_clk,
+
+  // SPI slave
+  input i_dck,
+  input i_cs,
+  input i_mosi,
+  
+  // Output to LED drivers
   output o_clk,
   output o_dai,
   output o_lat
+
 );
 
   localparam c_ledboards = 30;
@@ -44,6 +55,15 @@ module lamp #(
   ) clkdiv (
     .i_clk (i_clk),
     .o_clk (w_clk)
+  );
+
+  protocol /*#(
+
+  )*/ protocol (
+    .i_clk (i_clk),
+    .i_dck (i_dck),
+    .i_cs (i_cs),
+    .i_mosi (i_mosi)
   );
 
   framebuffer #(
