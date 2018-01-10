@@ -43,7 +43,7 @@ module lamp_tb();
   end
 
   initial begin
-    #100;
+    //#100;
     r_cs = 0;
     sendData(128'h000e0078001001001001800800800800);
     r_cs = 1;
@@ -63,11 +63,12 @@ module lamp_tb();
       for(i=0; i<128; i=i+1) begin
         #0.5;
         r_dck = 0;
-        r_mosi = i_data[i];
+        r_mosi = i_data[127 - i];
         #0.5;
         r_dck = 1; // 100 kHz
       end
       r_dck = 0;
+      r_mosi = 0;
       #1;
       r_cs = 1;
     end
