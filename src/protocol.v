@@ -1,23 +1,45 @@
-module protocol /* #(
-  
-)*/(
+module protocol #(
+  parameter c_ledboards = 30,
+  parameter c_bpc = 12,
+  parameter c_max_time = 1024,
+  parameter c_max_type = 64,
+  parameter c_channels = c_ledboards * 32,
+  parameter c_addr_w = $clog2(c_channels),
+  parameter c_time_w = $clog2(c_max_time),
+  parameter c_type_w = $clog2(c_max_type)
+)(
   input i_clk,
   input i_dck,
   input i_cs,
-  input i_mosi
+  input i_mosi,
+  output o_wen,
+  output [c_addr_w-1:0] o_addr,
+  output [c_bpc-1:0] o_data,
+  output [c_time_w-1:0] o_time,
+  output [c_type_w-1:0] o_type 
 );
 
   reg r_prev_dck = 0;
 
-  reg [4:0] r_command = 0;
-  reg [10:0] r_length = 0;
-  reg [2:0] r_command_bit = 0;
-  reg [3:0] r_length_bit = 0;
+  localparam c_command_bits = 5;
+  localparam c_length_bits = 11;
+  localparam c_kf_type_bits = 6;
+  localparam c_kf_duration_bits = 10;
 
-  reg [5:0] r_kf_type = 0;
-  reg [9:0] r_kf_duration = 0;
-  reg [2:0] r_kf_type_bit = 0;
-  reg [3:0] r_kf_duration_bit = 0;
+  localparam c_command_bit_w = $clog2(c_command_bits);
+  localparam c_length_bit_w = $clog2(c_length_bits);
+  localparam c_kf_type_bit_w = $clog2(c_kf_type_bits);
+  localparam c_kf_duration_bit_w = $clog2(c_kf_duration_bits);
+
+  reg [c_command_bits-1:0] r_command = 0;
+  reg [c_length_bits-1:0] r_length = 0;
+  reg [c_kf_type_bits-1:0] r_kf_type = 0;
+  reg [c_kf_duration_bits-1:0] r_kf_duration = 0;
+
+  reg [c_command_bit_w-1:0] r_command_bit = 0;
+  reg [c_length_bit_w-1:0] r_length_bit = 0;
+  reg [c_kf_type_bit_w-1:0] r_kf_type_bit = 0;
+  reg [c_kf_duration_bit_w-1:0] r_kf_duration_bit = 0;
 
   reg [2:0] r_bitcount = 0;
   
@@ -60,21 +82,21 @@ module protocol /* #(
       case (r_global_state)
         s_global_wait: begin
           r_global_state = s_global_command;
-          r_command[4] = i_bit;
+          r_command[c_command_bits - 1] = i_bit;
           r_command_bit = 1;
         end
         s_global_command: begin
-          if (r_command_bit == 4) begin
+          if (r_command_bit == c_command_bits - 1) begin
             r_global_state = s_global_length;
           end
-          r_command[4 - r_command_bit] = i_bit;
+          r_command[c_command_bits - 1 - r_command_bit] = i_bit;
           r_command_bit = r_command_bit + 1;
         end
         s_global_length: begin
-          if (r_length_bit == 10) begin
+          if (r_length_bit == c_length_bits - 1) begin
             r_global_state = s_global_execute;
           end
-          r_length[10 - r_length_bit] = i_bit;
+          r_length[c_length_bits - 1 - r_length_bit] = i_bit;
           r_length_bit = r_length_bit + 1;
         end
         s_global_execute: begin
@@ -112,21 +134,21 @@ module protocol /* #(
       case (r_keyframe_state)
         s_keyframe_wait: begin
           r_keyframe_state = s_keyframe_type;
-          r_kf_type[5] = i_bit;
+          r_kf_type[c_kf_type_bits - 1] = i_bit;
           r_kf_type_bit = 1;
         end
         s_keyframe_type: begin
-          if (r_kf_type_bit == 5) begin
+          if (r_kf_type_bit == c_kf_type_bits - 1) begin
             r_keyframe_state = s_keyframe_duration;
           end
-          r_kf_type[5 - r_kf_type_bit] = i_bit;
+          r_kf_type[c_kf_type_bits - 1 - r_kf_type_bit] = i_bit;
           r_kf_type_bit = r_kf_type_bit + 1;
         end
         s_keyframe_duration: begin
-          if (r_kf_duration_bit == 9) begin
+          if (r_kf_duration_bit == c_kf_duration_bits - 1) begin
             r_keyframe_state = s_keyframe_data;
           end
-          r_kf_duration[9 - r_kf_duration_bit] = i_bit;
+          r_kf_duration[c_kf_duration_bits - 1 - r_kf_duration_bit] = i_bit;
           r_kf_duration_bit = r_kf_duration_bit + 1;
         end
         s_keyframe_data: begin

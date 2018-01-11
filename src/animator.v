@@ -1,9 +1,9 @@
 module animator #( 
   parameter c_ledboards = 30,
-  parameter c_channels = c_ledboards * 32,
-  parameter c_addr_w = $clog2(c_channels),
   parameter c_bpc = 12,
   parameter c_max_time = 1024,
+  parameter c_channels = c_ledboards * 32,
+  parameter c_addr_w = $clog2(c_channels),
   parameter c_time_w = $clog2(c_max_time)
 )(
   input i_clk, i_drq,

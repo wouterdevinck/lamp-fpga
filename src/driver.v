@@ -1,9 +1,9 @@
 module driver #( 
   parameter c_ledboards = 30,
-  parameter c_channels = c_ledboards * 32,
-  parameter c_addr_w = $clog2(c_channels),
   parameter c_bpc = 12,
-  parameter c_frame_period = 16666
+  parameter c_frame_period = 16666,
+  parameter c_channels = c_ledboards * 32,
+  parameter c_addr_w = $clog2(c_channels)
 )(
   input i_clk,
   input [c_bpc-1:0] i_data,
