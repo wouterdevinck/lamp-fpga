@@ -42,6 +42,12 @@ module protocol #(
   reg [c_kf_duration_bit_w-1:0] r_kf_duration_bit = 0;
 
   reg [2:0] r_bitcount = 0;
+
+  reg r_wen = 0;
+  reg [c_addr_w-1:0] r_addr = 0;
+  reg [c_bpc-1:0] r_data = 0;
+
+  reg [3:0] r_databit = 0;
   
   localparam s_global_wait = 2'd0;
   localparam s_global_command = 2'd1;
@@ -73,6 +79,8 @@ module protocol #(
       r_length_bit = 0;
       r_kf_type_bit = 0;
       r_kf_duration_bit = 0;
+      r_bitcount = 0;
+      r_databit = 0;
     end
   end
 
@@ -152,12 +160,26 @@ module protocol #(
           r_kf_duration_bit = r_kf_duration_bit + 1;
         end
         s_keyframe_data: begin
-          // TODO pump keyframe data into framebuffer
+          // TODO wen
+          // TODO not correct yet
+          if (r_databit == c_bpc - 1) begin
+            r_addr = r_addr + 1; 
+            r_databit = 0;
+          end else begin
+            r_databit = r_databit + 1;
+          end
+          r_data[r_databit] = i_bit;
         end
         default: begin
         end
       endcase
     end
   endtask
+
+  assign o_wen = r_wen;
+  assign o_addr = r_addr;
+  assign o_data = r_data;
+  assign o_time = r_kf_duration;
+  assign o_type = r_kf_type;
 
 endmodule

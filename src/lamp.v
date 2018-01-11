@@ -33,6 +33,7 @@ module lamp #(
   localparam c_channels = c_ledboards * 32;
   localparam c_addr_w = $clog2(c_channels);
   localparam c_time_w = $clog2(c_max_time);
+  localparam c_type_w = $clog2(c_max_type);
 
   wire w_clk;
 
@@ -49,6 +50,8 @@ module lamp #(
   wire w_next_write; // TODO: driver
 
   wire [c_bpc-1:0] w_target_data;
+  wire [c_time_w-1:0] w_target_time;
+  wire [c_type_w-1:0] w_target_type;
 
   wire [c_bpc-1:0] w_animator_data;
   wire [c_addr_w-1:0] w_animator_addr;
@@ -119,20 +122,22 @@ module lamp #(
     .i_type (w_next_type),
     .i_raddr (w_animator_addr),
     .o_rdata (w_target_data),
-    .o_time (),  // TODO
-    .o_type ()   // TODO
+    .o_time (w_target_time),
+    .o_type (w_target_type)
   );
 
   animator #(
     .c_ledboards (c_ledboards),
     .c_bpc (c_bpc),
-    .c_max_time (c_max_time)
+    .c_max_time (c_max_time),
+    .c_max_type (c_max_type)
   ) animator (
     .i_clk (w_clk),
     .i_drq (w_driver_lat),
     .i_target_data (w_target_data),
     .i_current_data (w_current_data),
-    .i_target_time (), // TODO
+    .i_type (w_target_type),
+    .i_target_time (w_target_time),
     .i_start_time (),  // TODO
     .o_wen (w_animator_write),
     .o_addr (w_animator_addr), 

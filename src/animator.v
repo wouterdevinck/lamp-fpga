@@ -2,12 +2,15 @@ module animator #(
   parameter c_ledboards = 30,
   parameter c_bpc = 12,
   parameter c_max_time = 1024,
+  parameter c_max_type = 64,
   parameter c_channels = c_ledboards * 32,
   parameter c_addr_w = $clog2(c_channels),
-  parameter c_time_w = $clog2(c_max_time)
+  parameter c_time_w = $clog2(c_max_time),
+  parameter c_type_w = $clog2(c_max_type)
 )(
   input i_clk, i_drq,
   input [c_bpc-1:0] i_target_data, i_current_data,
+  input [c_type_w-1:0] i_type,
   input [c_time_w-1:0] i_target_time, i_start_time,
   output o_wen,
   output [c_addr_w-1:0] o_addr,
@@ -35,7 +38,7 @@ module animator #(
   /* verilator lint_off WIDTH */
   task calculate;
 
-    input [0:0] i_anim_type;
+    input [c_type_w-1:0] i_anim_type;
     input [c_bpc-1:0] i_current_data;
     input [c_bpc-1:0] i_target_data; 
     input [c_time_w-1:0] i_start_time;
@@ -80,7 +83,7 @@ module animator #(
       end
       s_anim: begin
         calculate(
-          c_anim_linear,
+          i_type,
           i_current_data, i_target_data, 
           i_start_time, r_count, i_target_time, 
           r_data
