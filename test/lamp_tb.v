@@ -67,6 +67,7 @@ module lamp_tb();
         #0.5;
         r_dck = 1; // 100 kHz
       end
+      #0.5;
       r_dck = 0;
       r_mosi = 0;
       #1;

@@ -40,6 +40,7 @@ module protocol #(
   reg [c_length_bit_w-1:0] r_length_bit = 0;
   reg [c_kf_type_bit_w-1:0] r_kf_type_bit = 0;
   reg [c_kf_duration_bit_w-1:0] r_kf_duration_bit = 0;
+  reg r_kf_flag = 0;
 
   reg [2:0] r_bitcount = 0;
 
@@ -73,14 +74,16 @@ module protocol #(
       end
     end else begin
       r_prev_dck = 0;
-      r_global_state = 0;
-      r_keyframe_state = 0;
+      r_global_state = s_global_wait;
+      r_keyframe_state = s_keyframe_wait;
       r_command_bit = 0;
       r_length_bit = 0;
       r_kf_type_bit = 0;
       r_kf_duration_bit = 0;
+      r_kf_flag = 0;
       r_bitcount = 0;
       r_databit = 0;
+      r_wen = 0;
     end
   end
 
@@ -92,6 +95,7 @@ module protocol #(
           r_global_state = s_global_command;
           r_command[c_command_bits - 1] = i_bit;
           r_command_bit = 1;
+          r_keyframe_state = s_keyframe_wait;
         end
         s_global_command: begin
           if (r_command_bit == c_command_bits - 1) begin
@@ -108,7 +112,7 @@ module protocol #(
           r_length_bit = r_length_bit + 1;
         end
         s_global_execute: begin
-          if (r_length == 1 && r_bitcount == 6) begin
+          if (r_length == 1 && r_bitcount == 7) begin
             r_global_state = s_global_wait;
           end
           if (r_bitcount == 7) begin
@@ -160,15 +164,19 @@ module protocol #(
           r_kf_duration_bit = r_kf_duration_bit + 1;
         end
         s_keyframe_data: begin
-          // TODO wen
-          // TODO not correct yet
-          if (r_databit == c_bpc - 1) begin
+          // TODO not correct yet - databit one ahead & order wrong
+          if (r_databit == 0 && r_kf_flag == 1) begin
             r_addr = r_addr + 1; 
+            r_wen = 0;
+          end
+          if (r_databit == c_bpc - 1) begin
             r_databit = 0;
+            r_wen = 1;
+            r_kf_flag = 1;
           end else begin
             r_databit = r_databit + 1;
           end
-          r_data[r_databit] = i_bit;
+          r_data[r_databit] = i_bit; 
         end
         default: begin
         end
