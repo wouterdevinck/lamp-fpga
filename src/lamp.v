@@ -79,7 +79,7 @@ module lamp #(
     .c_max_time (c_max_time),
     .c_max_type (c_max_type)
   ) protocol (
-    .i_clk (i_clk),
+    .i_clk (w_clk),
     .i_dck (i_dck),
     .i_cs (i_cs),
     .i_mosi (i_mosi),

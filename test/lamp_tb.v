@@ -59,18 +59,18 @@ module lamp_tb();
     input [127:0] i_data;
     begin
       r_cs = 0;
-      #1;
+      #10;
       for(i=0; i<128; i=i+1) begin
-        #0.5;
+        #5;
         r_dck = 0;
         r_mosi = i_data[127 - i];
-        #0.5;
+        #5;
         r_dck = 1; // 100 kHz
       end
-      #0.5;
+      #5;
       r_dck = 0;
       r_mosi = 0;
-      #1;
+      #10;
       r_cs = 1;
     end
   endtask

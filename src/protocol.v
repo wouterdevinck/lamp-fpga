@@ -70,8 +70,8 @@ module protocol #(
         r_prev_dck = i_dck;
         if(i_dck == 1) begin
           receiveBit(i_mosi);
-        end
-      end
+        end 
+      end 
     end else begin
       r_prev_dck = 0;
       r_global_state = s_global_wait;
@@ -164,19 +164,22 @@ module protocol #(
           r_kf_duration_bit = r_kf_duration_bit + 1;
         end
         s_keyframe_data: begin
-          // TODO not correct yet - databit one ahead & order wrong
           if (r_databit == 0 && r_kf_flag == 1) begin
-            r_addr = r_addr + 1; 
-            r_wen = 0;
+            r_addr = r_addr + 1;
+          end
+          if (r_databit == c_bpc - 2) begin
+            r_wen = 1;
           end
           if (r_databit == c_bpc - 1) begin
-            r_databit = 0;
-            r_wen = 1;
-            r_kf_flag = 1;
+            r_databit = 0; 
+            r_wen = 0;
           end else begin
-            r_databit = r_databit + 1;
+            if (r_kf_flag == 1) begin
+              r_databit = r_databit + 1;
+            end
           end
-          r_data[r_databit] = i_bit; 
+          r_data[c_bpc - 1 - r_databit] = i_bit; 
+          r_kf_flag = 1;
         end
         default: begin
         end
