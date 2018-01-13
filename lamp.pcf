@@ -1,4 +1,7 @@
 set_io i_clk 15
+set_io i_dck 29
+set_io i_cs 30
+set_io i_mosi 33
 set_io o_clk 26
 set_io o_dai 27
 set_io o_lat 28
