@@ -46,13 +46,15 @@ docker-push:
 docker-clean:
 	docker system prune -f
 
+PWD := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+
 ifeq (docker,$(firstword $(MAKECMDGOALS)))
   DOCKER_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
   $(eval $(DOCKER_ARGS):;@:)
 endif
 
 docker:
-	docker run --rm -v `pwd`:/src -w /src $(DOCKER) make $(DOCKER_ARGS)
+	docker run --rm -v $(PWD):/src -w /src $(DOCKER) make $(DOCKER_ARGS)
 
 docker-simulate: 
 	make docker simulate-file
