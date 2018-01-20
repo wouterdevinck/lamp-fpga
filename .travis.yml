@@ -4,6 +4,10 @@ services:
   - docker
 os:
   - linux
+stages:
+  - Linting
+  - Synthesis
+  - Simulation
 jobs:
   include:
     - stage: Linting
