@@ -11,8 +11,8 @@ stages:
 jobs:
   include:
     - stage: Linting
-      script: make docker lint
+      script: sudo chmod -R 777 `pwd`; make docker lint
     - stage: Synthesis
-      script: make docker all
+      script: sudo chmod -R 777 `pwd`; make docker all
     - stage: Simulation
-      script: make docker simulate-file 
+      script: sudo chmod -R 777 `pwd`; make docker simulate-file
