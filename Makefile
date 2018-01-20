@@ -54,7 +54,7 @@ ifeq (docker,$(firstword $(MAKECMDGOALS)))
 endif
 
 docker:
-	docker run --rm -v $(PWD):/src -w /src $(DOCKER) make $(DOCKER_ARGS)
+	docker run --rm -v $(PWD):/src:Z -w /src $(DOCKER) make $(DOCKER_ARGS)
 
 docker-simulate: 
 	make docker simulate-file
