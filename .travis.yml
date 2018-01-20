@@ -1,25 +1,14 @@
 sudo: true
 language: bash
+services:
+  - docker
 os:
   - linux
-
-addons:
-  apt:
-    packages:
-      - clang
-      - libffi-dev
-      - mercurial
-      - graphviz
-      - xdot
-      - libftdi-dev
-      - gperf
-
-before_install:
-  - PROJECT_PATH=$(pwd)
-
-install:
-  - sudo ./scripts/installtools.sh
-
-script:
-  - cd $PROJECT_PATH
-  - make clean lint all simulate-file
+jobs:
+  include:
+    - stage: Linting
+      script: make docker lint
+    - stage: Synthesis
+      script: make docker all
+    - stage: Simulation
+      script: make docker simulate-file 
