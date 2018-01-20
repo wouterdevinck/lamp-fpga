@@ -15,7 +15,7 @@ RUN apt-get update && \
 FROM ubuntu:17.10
 COPY --from=build /root/fpga/out /
 RUN apt-get update && \ 
-    apt-get install -y --no-install-recommends make && \
+    apt-get install -y --no-install-recommends make perl tclsh && \
     apt-get autoremove -yqq && \
     apt-get autoclean -yqq && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/cache/apt
