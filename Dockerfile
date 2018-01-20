@@ -1,17 +1,7 @@
-FROM ubuntu:17.10
-
-COPY installtools.sh .
-
-RUN apt-get update && \
-    apt-get -y install sudo && \
-    useradd -m docker && echo "docker:docker" | chpasswd && \
-    adduser docker sudo && \
-    echo "docker ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-
-USER docker
-
-RUN sudo apt-get update && \
-    sudo apt-get install -y \
+FROM ubuntu:17.10 AS build
+COPY scripts/installtools.sh .
+RUN apt-get update && \ 
+    apt-get install -y \
       apt-utils pkg-config \
       git mercurial \
       build-essential clang \
@@ -19,6 +9,13 @@ RUN sudo apt-get update && \
       graphviz xdot gperf \
       gawk tclsh tcl-dev \
       libreadline-dev bison \
-      flex python autoconf
+      flex python autoconf && \
+    ./installtools.sh
 
-RUN ./installtools.sh
+FROM ubuntu:17.10
+COPY --from=build /root/fpga/out /
+RUN apt-get update && \ 
+    apt-get install -y --no-install-recommends make && \
+    apt-get autoremove -yqq && \
+    apt-get autoclean -yqq && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/cache/apt

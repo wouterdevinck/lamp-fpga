@@ -18,7 +18,7 @@ before_install:
   - PROJECT_PATH=$(pwd)
 
 install:
-  - ./installtools.sh
+  - sudo ./scripts/installtools.sh
 
 script:
   - cd $PROJECT_PATH
