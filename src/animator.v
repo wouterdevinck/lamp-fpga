@@ -14,7 +14,8 @@ module animator #(
   input [c_time_w-1:0] i_target_time, i_start_time,
   output o_wen,
   output [c_addr_w-1:0] o_addr,
-  output [c_bpc-1:0] o_data
+  output [c_bpc-1:0] o_data,
+  output o_drq
 );
 
   localparam c_channels_1 = c_channels - 1;
@@ -23,6 +24,7 @@ module animator #(
   reg [c_addr_w-1:0] r_addr = 0;
   reg [c_bpc-1:0] r_data = 0;
   reg r_wen = 0;
+  reg r_drq = 0;
 
   reg [c_time_w-1:0] r_count = 0;
 
@@ -48,6 +50,7 @@ module animator #(
 
     begin
       case (i_anim_type) 
+        // TODO BUG division by zero possible
         c_anim_linear: begin
           if (i_target_time < i_current_time) begin
             o_data = i_current_data + (i_target_data - i_current_data) / 
@@ -77,6 +80,7 @@ module animator #(
           r_addr <= 0;
           r_state <= s_read;
         end
+        r_drq <= 0;
       end
       s_read: begin
         r_state <= s_anim;
@@ -101,8 +105,9 @@ module animator #(
         end
       end
       s_end: begin
-        // TODO write time to current frame (here?)
-        // TODO request next keyframe
+        if (r_count == i_target_time) begin
+          r_drq <= 1'b1;
+        end
         r_state <= s_wait;
       end
       default: begin
@@ -113,5 +118,6 @@ module animator #(
   assign o_addr = r_addr;
   assign o_data = r_data;
   assign o_wen = r_wen;
+  assign o_drq = r_drq;
 
 endmodule

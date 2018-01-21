@@ -16,7 +16,8 @@ module protocol #(
   output [c_addr_w-1:0] o_addr,
   output [c_bpc-1:0] o_data,
   output [c_time_w-1:0] o_time,
-  output [c_type_w-1:0] o_type 
+  output [c_type_w-1:0] o_type,
+  output o_ready // TODO: TEMP? note: ready pulse comes at same time as last write, not after!
 );
 
   reg r_prev_dck = 0;
@@ -50,11 +51,12 @@ module protocol #(
 
   reg [3:0] r_databit = 0;
   
-  localparam s_global_wait = 2'd0;
-  localparam s_global_command = 2'd1;
-  localparam s_global_length = 2'd2;
-  localparam s_global_execute = 2'd3;
-  reg [1:0] r_global_state = s_global_wait;
+  localparam s_global_wait = 3'd0;
+  localparam s_global_command = 3'd1;
+  localparam s_global_length = 3'd2;
+  localparam s_global_execute = 3'd3;
+  localparam s_global_ready = 3'd4;
+  reg [2:0] r_global_state = s_global_wait;
   
   localparam s_keyframe_wait = 2'd0;
   localparam s_keyframe_type = 2'd1;
@@ -73,6 +75,7 @@ module protocol #(
         end 
       end 
     end else begin
+      // TODO to be checked in HW if this is okay, depending on how fast CS goes up again
       r_prev_dck = 0;
       r_global_state = s_global_wait;
       r_keyframe_state = s_keyframe_wait;
@@ -84,6 +87,8 @@ module protocol #(
       r_bitcount = 0;
       r_databit = 0;
       r_wen = 0;
+      r_addr = 0;
+      r_data = 0;
     end
   end
 
@@ -113,7 +118,7 @@ module protocol #(
         end
         s_global_execute: begin
           if (r_length == 1 && r_bitcount == 7) begin
-            r_global_state = s_global_wait;
+            r_global_state = s_global_ready;
           end
           if (r_bitcount == 7) begin
             r_length = r_length - 1; 
@@ -122,6 +127,9 @@ module protocol #(
             r_bitcount = r_bitcount + 1;
           end
           messagePump(i_bit);
+        end
+        s_global_ready: begin
+          r_global_state = s_global_wait;
         end
         default: begin
         end
@@ -192,5 +200,6 @@ module protocol #(
   assign o_data = r_data;
   assign o_time = r_kf_duration;
   assign o_type = r_kf_type;
+  assign o_ready = (r_global_state == s_global_ready);
 
 endmodule

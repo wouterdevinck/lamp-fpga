@@ -1,6 +1,7 @@
 `include "clkdiv.v"
 `include "protocol.v"
 `include "framebuffer.v"
+`include "framemanager.v"
 `include "animator.v"
 `include "driver.v"
 
@@ -23,7 +24,11 @@ module lamp #(
 
 );
 
-  localparam c_ledboards = 30;
+  // TODO: startup sequence -> trigger controlled drq's before sending out crap data
+  // TODO: inconsistent usage of = and <=
+  // TODO: inconsistent usage of 1'b1 and 1
+
+  localparam c_ledboards = 2; // 30 in final setup
   localparam c_framerate = 120;
   localparam c_max_time = 1024;
   localparam c_max_type = 64;
@@ -42,20 +47,24 @@ module lamp #(
   wire [c_type_w-1:0] w_protocol_type;
   wire [c_addr_w-1:0] w_protocol_addr;
   wire w_protocol_write;
+  wire w_protocol_ready;
 
   wire [c_bpc-1:0] w_next_data;
   wire [c_time_w-1:0] w_next_time;
   wire [c_type_w-1:0] w_next_type;
-  wire [c_addr_w-1:0] w_next_addr; // TODO: driver
-  wire w_next_write; // TODO: driver
+  wire [c_addr_w-1:0] w_next_addr;
+  wire w_next_write;
 
   wire [c_bpc-1:0] w_target_data;
   wire [c_time_w-1:0] w_target_time;
   wire [c_type_w-1:0] w_target_type;
 
+  wire [c_time_w-1:0] w_start_time;
+
   wire [c_bpc-1:0] w_animator_data;
   wire [c_addr_w-1:0] w_animator_addr;
   wire w_animator_write;
+  wire w_animator_drq;
 
   wire [c_bpc-1:0] w_current_data;
   wire [c_addr_w-1:0] w_current_addr;
@@ -87,7 +96,8 @@ module lamp #(
     .o_addr (w_protocol_addr),
     .o_data (w_protocol_data),
     .o_time (w_protocol_time),
-    .o_type (w_protocol_type) 
+    .o_type (w_protocol_type),
+    .o_ready (w_protocol_ready)
   );
 
   framebuffer #(
@@ -95,7 +105,7 @@ module lamp #(
     .c_bpc (c_bpc),
     .c_max_time (c_max_time),
     .c_max_type (c_max_type)
-  ) next_target_frame (
+  ) next (
     .i_clk (w_clk),
     .i_wen (w_protocol_write),
     .i_waddr (w_protocol_addr),
@@ -108,12 +118,25 @@ module lamp #(
     .o_type (w_next_type)
   );
 
+  framemanager #(
+    .c_ledboards (c_ledboards),
+    .c_max_time (c_max_time)
+  ) manager (
+    .i_clk (w_clk),
+    .i_drq (w_animator_drq | w_protocol_ready), // Ready trigger = TEMP
+    .i_target_time (w_target_time),
+    .o_addr (w_next_addr),
+    .o_start_time (w_start_time),
+    .o_wen (w_next_write),
+    .o_drq () // TODO connect to protocol / send out as int
+  );
+
   framebuffer #(
     .c_ledboards (c_ledboards),
     .c_bpc (c_bpc),
     .c_max_time (c_max_time),
     .c_max_type (c_max_type)
-  ) target_frame (
+  ) target (
     .i_clk (w_clk),
     .i_wen (w_next_write),
     .i_waddr (w_next_addr),
@@ -138,10 +161,11 @@ module lamp #(
     .i_current_data (w_current_data),
     .i_type (w_target_type),
     .i_target_time (w_target_time),
-    .i_start_time (),  // TODO
+    .i_start_time (w_start_time),
     .o_wen (w_animator_write),
     .o_addr (w_animator_addr), 
-    .o_data (w_animator_data)
+    .o_data (w_animator_data),
+    .o_drq (w_animator_drq)
   );
 
   framebuffer #(
@@ -149,17 +173,15 @@ module lamp #(
     .c_bpc (c_bpc),
     .c_max_time (c_max_time),
     .c_max_type (c_max_type)
-  ) current_frame (
+  ) current (
     .i_clk (w_clk),
     .i_wen (w_animator_write),
     .i_waddr (w_animator_addr),
     .i_wdata (w_animator_data),
-    .i_time (), // TODO
-    .i_type (), // TODO
+    .i_time (), .i_type (), // n/a
     .i_raddr (w_current_addr),
     .o_rdata (w_current_data),
-    .o_time (), // TODO
-    .o_type ()  // TODO
+    .o_time (), .o_type () // n/a
   );
   
   driver #(
