@@ -28,7 +28,7 @@ module lamp #(
   // TODO: inconsistent usage of = and <=
   // TODO: inconsistent usage of 1'b1 and 1
 
-  localparam c_ledboards = 2; // 30 in final setup
+  localparam c_ledboards = 30; // 30 in final setup
   localparam c_framerate = 120;
   localparam c_max_time = 1024;
   localparam c_max_type = 64;

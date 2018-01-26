@@ -14,7 +14,7 @@ module framemanager #(
   output o_drq
 );
 
-  /*reg [c_addr_w-1:0] r_addr = 0;
+  reg [c_addr_w-1:0] r_addr = 0;
   reg [c_time_w-1:0] r_time = 0;
   reg r_drq = 0;
 
@@ -54,6 +54,6 @@ module framemanager #(
   assign o_addr = r_addr;
   assign o_start_time = r_time;
   assign o_wen = (r_state != s_wait);
-  assign o_drq = r_drq;*/
+  assign o_drq = r_drq;
 
 endmodule

@@ -6,7 +6,7 @@ mkdir -p ~/fpga
 cd ~/fpga
 git clone https://github.com/cliffordwolf/icestorm.git icestorm
 cd icestorm
-git checkout 14b44ca866665352e7146778bb932e45b5fdedbd
+git checkout 479467a50da0bd604a52116dcefbacf36bc601bd
 make -j$(nproc)
 make install # because chipdb needed by arachne
 make DESTDIR=~/fpga/out install
@@ -14,14 +14,14 @@ make DESTDIR=~/fpga/out install
 cd ~/fpga
 git clone https://github.com/cseed/arachne-pnr.git arachne-pnr
 cd arachne-pnr
-git checkout a32dd2c137b2bb6ba6704b25109790ac76bc2f45
+git checkout 4b5fee9dbba1abaa5d4743a5b9daa8b58a0e9dcf
 make -j$(nproc)
 make DESTDIR=~/fpga/out install
 
 cd ~/fpga
 git clone https://github.com/cliffordwolf/yosys.git yosys
 cd yosys
-git checkout 1f6e8f86c516f37f1d93e91c46fe427f7a646b15
+git checkout 1d8161b432fd5bc7fc03c21033f90d2a80cf741f
 make -j$(nproc)
 make DESTDIR=~/fpga/out install
 
